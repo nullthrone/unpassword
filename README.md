@@ -1,2 +1,2 @@
 # unpassword
-A Google Workspace app that removes passwords of PDF files for archiving purposes.
+A Google Workspace app that removes passwords of Office, PDF files and compressed archives for archiving purposes.
