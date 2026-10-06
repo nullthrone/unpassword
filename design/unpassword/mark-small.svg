@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="unpassword">
+<g fill="currentColor">
+  <path d="M80,8 H176 V28 H196 V108 H164 V60 H92 V128 H60 V28 H80 Z"/>
+  <path fill-rule="evenodd" d="M28,132 H228 V256 H28 Z M108,170 A20,20 0 0 1 148,170 V214 A20,20 0 0 1 108,214 Z"/>
+</g></svg>

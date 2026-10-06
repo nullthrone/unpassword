@@ -1,0 +1,466 @@
+/*
+ * unpassword app styles on the Nullthrone Design System tokens
+ * (design/nullthrone). Square corners, hairlines, ink on paper, brass as the
+ * single accent. Dark mode comes from the tokens (OS preference).
+ */
+@import '../../design/nullthrone/nullthrone.css';
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+
+/* ------------------------------------------------------------ brand band */
+
+.band {
+  background: var(--surface-inverse);
+  color: var(--text-inverse);
+}
+
+.band-inner {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--text-inverse);
+  text-decoration: none;
+}
+
+.brand:hover {
+  color: var(--brass-400);
+}
+
+.wordmark,
+.byline,
+.eyebrow,
+.badge,
+button,
+label.field,
+summary {
+  font-family: var(--font-display);
+  font-weight: var(--weight-display);
+  text-transform: uppercase;
+  letter-spacing: var(--track-caps);
+}
+
+.wordmark {
+  font-size: 14px;
+  letter-spacing: var(--track-caps-wide);
+}
+
+.byline {
+  font-size: var(--text-xs);
+  color: var(--ink-300);
+}
+
+/* ------------------------------------------------------------ intro */
+
+.intro {
+  padding: var(--space-7) 0 var(--space-5);
+}
+
+.eyebrow {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-xs);
+  letter-spacing: var(--track-caps-wide);
+  color: var(--text-accent);
+}
+
+h1 {
+  font-size: var(--display-lg);
+  margin-bottom: var(--space-3);
+}
+
+.tagline {
+  margin: 0 0 var(--space-4);
+  font-size: var(--text-lg);
+  color: var(--text-muted);
+}
+
+.principles {
+  margin: 0;
+  padding: var(--space-4) 0 0;
+  border-top: var(--line);
+  list-style: none;
+  display: grid;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.principles li {
+  padding-left: var(--space-4);
+  position: relative;
+}
+
+.principles li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.6em;
+  width: 8px;
+  border-top: 1px solid var(--brass-500);
+}
+
+/* ------------------------------------------------------------ card */
+
+.card {
+  background: var(--surface-card);
+  border: var(--line);
+  box-shadow: var(--shadow-1);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  animation: nt-fade-up var(--dur-med) var(--ease);
+}
+
+.dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-7) var(--space-4);
+  border: 1px dashed var(--border-mid);
+  background: var(--paper-white);
+  cursor: pointer;
+  text-align: center;
+  transition: border-color var(--dur-fast) var(--ease);
+}
+
+.dropzone strong {
+  font-family: var(--font-display);
+  font-weight: var(--weight-display);
+  font-size: var(--display-sm);
+}
+
+.dropzone:hover,
+.dropzone.over,
+#file:focus-visible + .dropzone {
+  border: var(--line-strong);
+}
+
+#file:focus-visible + .dropzone {
+  box-shadow: var(--focus-ring);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.file {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+  padding-bottom: var(--space-4);
+  border-bottom: var(--line);
+}
+
+.file .name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: var(--weight-strong);
+}
+
+.badge {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 var(--space-2);
+  font-size: 10px;
+  background: var(--brass-100);
+  color: var(--brass-700);
+  border: 1px solid var(--brass-400);
+}
+
+/* ------------------------------------------------------------ form */
+
+form.unlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+label.field {
+  font-size: var(--text-xs);
+  color: var(--ink-700);
+}
+
+input[type='password'] {
+  font: inherit;
+  font-size: 14px;
+  height: var(--control-h-lg);
+  padding: 0 var(--space-3);
+  border: var(--line);
+  border-radius: var(--radius-0);
+  background: var(--paper-white);
+  color: var(--text-body);
+  width: 100%;
+  outline: none;
+  transition: border-color var(--dur-fast) var(--ease);
+}
+
+input[type='password']:focus {
+  border: var(--line-strong);
+  box-shadow: var(--focus-ring);
+}
+
+input:disabled {
+  background: var(--surface-inset);
+}
+
+.check {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.check input {
+  appearance: none;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin: 3px 0 0;
+  border: 1px solid var(--ink-400);
+  border-radius: var(--radius-1);
+  background: var(--paper-white);
+  display: grid;
+  place-content: center;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease);
+}
+
+.check input:checked {
+  background: var(--ink-950);
+  border-color: var(--ink-950);
+}
+
+.check input:checked::after {
+  content: '';
+  width: 8px;
+  height: 4px;
+  border-left: 1.6px solid var(--paper);
+  border-bottom: 1.6px solid var(--paper);
+  transform: translateY(-1px) rotate(-45deg);
+}
+
+.check input:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* ------------------------------------------------------------ buttons */
+
+button {
+  height: var(--control-h-md);
+  padding: 0 var(--space-4);
+  font-size: 12px;
+  border-radius: var(--radius-0);
+  border: 1px solid var(--ink-950);
+  background: var(--ink-950);
+  color: var(--paper);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--dur-fast) var(--ease);
+}
+
+button:hover {
+  background: var(--ink-700);
+}
+
+button:active {
+  background: var(--press-ink);
+}
+
+button:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* the single brass call to action of each view */
+button.accent {
+  height: var(--control-h-lg);
+  padding: 0 var(--space-5);
+  font-size: 13px;
+  background: var(--brass-500);
+  border-color: transparent;
+}
+
+button.accent:hover {
+  background: var(--brass-600);
+}
+
+button.accent:active {
+  background: var(--brass-700);
+}
+
+button.secondary {
+  background: transparent;
+  color: var(--ink-950);
+  border-color: var(--ink-950);
+}
+
+button.secondary:hover {
+  background: var(--surface-inset);
+}
+
+button.secondary:active {
+  background: var(--ink-200);
+}
+
+button.link {
+  align-self: flex-start;
+  height: auto;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  text-decoration: underline;
+  text-decoration-color: var(--brass-500);
+  text-underline-offset: 3px;
+}
+
+button.link:hover {
+  color: var(--brass-600);
+  background: none;
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+/* ------------------------------------------------------------ text & notices */
+
+.hint,
+.muted {
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  margin: 0;
+}
+
+.status {
+  margin: 0;
+  min-height: 1.5em;
+  font-size: 14px;
+}
+
+.status:empty {
+  display: none;
+}
+
+.status.error {
+  color: var(--danger);
+}
+
+.notice {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid;
+  font-size: 14px;
+}
+
+.notice.success {
+  background: var(--ok-bg);
+  color: var(--ok);
+}
+
+.notice.warning {
+  background: var(--warn-bg);
+  color: var(--warn);
+}
+
+.notice.error {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+/* ------------------------------------------------------------ footer */
+
+footer {
+  padding-top: var(--space-7);
+  padding-bottom: var(--space-7);
+  font-size: var(--text-sm);
+}
+
+.double-rule {
+  border-top: var(--line-strong);
+  padding-top: 3px;
+  margin-bottom: var(--space-5);
+}
+
+.double-rule::after {
+  content: '';
+  display: block;
+  border-top: var(--line-strong);
+}
+
+footer summary {
+  cursor: pointer;
+  font-size: var(--text-xs);
+  color: var(--ink-700);
+}
+
+footer ul {
+  color: var(--text-muted);
+  padding-left: var(--space-5);
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
+  margin-top: var(--space-5);
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: var(--display-md);
+  }
+
+  .card {
+    padding: var(--space-5) var(--space-4);
+  }
+
+  .byline {
+    display: none;
+  }
+}

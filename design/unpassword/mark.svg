@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="unpassword">
+<g fill="currentColor">
+  <path d="M96,6 H160 V18 H172 V30 H184 V100 H164 V38 H92 V122 H72 V30 H84 V18 H96 Z"/>
+  <path d="M52,126 H204 V140 H52 Z"/>
+  <path fill-rule="evenodd" d="M52,144 H204 V256 H52 Z M114,178 A14,14 0 0 1 142,178 V216 A14,14 0 0 1 114,216 Z"/>
+  <path d="M30,176 L46,166 V256 H30 Z"/>
+  <path transform="translate(256,0) scale(-1,1)" d="M30,176 L46,166 V256 H30 Z"/>
+  <path d="M8,206 L24,196 V256 H8 Z"/>
+  <path transform="translate(256,0) scale(-1,1)" d="M8,206 L24,196 V256 H8 Z"/>
+</g></svg>

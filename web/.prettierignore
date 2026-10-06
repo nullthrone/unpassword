@@ -1,0 +1,6 @@
+dist
+node_modules
+tests/fixtures
+test-results
+playwright-report
+dist-e2e
