@@ -1,7 +1,11 @@
 const de = {
   title: 'unpassword',
+  byline: 'by Nullthrone',
+  eyebrow: 'Open Source · Zero Knowledge',
+  headline: 'Passwörter entfernen, die du schon kennst.',
+  links: { privacy: 'Datenschutz', security: 'Sicherheit', terms: 'Nutzungsbedingungen', imprint: 'Impressum' },
   tagline:
-    'Passwortschutz von PDF-, Office- und ZIP-Dateien entfernen, deren Passwort du kennst – vollständig in deinem Browser.',
+    'PDF-, Office- und ZIP-Dateien entsperren und so archivieren, wie du es willst – vollständig in deinem Browser.',
   principleLocal: 'Entschlüsselung ausschließlich in deinem Browser. Kein Server, kein Tracking.',
   principleKnown: 'Du brauchst das bisherige Passwort. unpassword rät keine Passwörter und umgeht keinen Schutz.',
   principleArchive: 'Gedacht für die eigene Archivierung, geschützt auf deine Art statt mit fremden Passwörtern.',
@@ -70,8 +74,11 @@ type Strings = typeof de;
 
 const en: Strings = {
   title: 'unpassword',
-  tagline:
-    'Remove the password protection of PDF, Office and ZIP files whose password you know – entirely in your browser.',
+  byline: 'by Nullthrone',
+  eyebrow: 'Open Source · Zero Knowledge',
+  headline: 'Remove passwords you already know.',
+  links: { privacy: 'Privacy', security: 'Security', terms: 'Terms', imprint: 'Imprint' },
+  tagline: 'Unlock PDF, Office and ZIP files and archive them your way – entirely in your browser.',
   principleLocal: 'Decryption happens only in your browser. No server, no tracking.',
   principleKnown: 'You need the current password. unpassword never guesses passwords or bypasses protection.',
   principleArchive: 'Made for personal archiving, secured your way instead of with someone else’s passwords.',

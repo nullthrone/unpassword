@@ -1,0 +1,16 @@
+{
+  "name": "unpassword-site",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Documentation site for unpassword (GitHub Pages, Workspace Marketplace reference).",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "check": "node check.mjs",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "marked": "^18.1.0"
+  }
+}

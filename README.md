@@ -2,6 +2,8 @@
 
 A Google Workspace app that removes the password protection of **Office (DOCX/XLSX/PPTX), PDF files and compressed archives (ZIP)** whose password you already know, for archiving purposes: you can archive them under your own protection (account security, encrypted storage, access policies) instead of a sender's file password.
 
+**Website and documentation:** <https://nullthrone.github.io/unpassword/>. The web app runs at [`/app/`](https://nullthrone.github.io/unpassword/app/).
+
 **Zero-knowledge:** decryption and re-saving happen entirely in your browser. There is no backend. The provider of unpassword never receives your files, your passwords or the decrypted content.
 
 **Not a cracking tool:** unpassword requires the current password. It never guesses, enumerates or bypasses passwords, and it keeps protections that need a password you did not supply. See [Guardrails](#guardrails).
@@ -64,8 +66,10 @@ web/            static web app (Vite + TypeScript, no UI framework)
   tests/        Vitest unit tests + fixtures
   e2e/          Playwright tests (local mode, Drive mode with mocked APIs, network assertions)
 gmail-addon/    Apps Script Gmail launcher (never decrypts)
-scripts/        fixture generator
-docs/           security model, privacy policy, deployment setup
+site/           documentation site for GitHub Pages: renders docs/ and the landing page, no JavaScript
+design/         Nullthrone Design System tokens and fonts (self-hosted), the unpassword mark and its PNG renderings
+scripts/        fixture generator, cross-check, brand asset renderer
+docs/           security model, privacy policy, terms, support, imprint, deployment setup
 ```
 
 ## Development
@@ -80,11 +84,21 @@ npm run lint && npm run typecheck
 npm run build        # dist/ + dist/SHA256SUMS.txt
 ```
 
+Documentation site:
+
+```bash
+cd site && npm ci
+node build.mjs --app ../web/dist   # writes ../_site (app under /app/)
+node check.mjs                     # CSP, no external resources, no broken links
+```
+
+Brand assets (icons, banner, Marketplace screenshots) are rendered by `node scripts/render-brand-assets.mjs` after `npm run build` in `web/`.
+
 Drive integration needs `VITE_GOOGLE_CLIENT_ID`, `VITE_GOOGLE_API_KEY` and `VITE_GOOGLE_APP_ID` (see [docs/SETUP.md](docs/SETUP.md)). Without them the app runs in local mode only.
 
 ## Verifying a deployment
 
-The Pages workflow builds from a tagged commit and publishes `SHA256SUMS.txt` next to the app. Build the same tag locally with the same public Google identifiers and compare the checksums.
+The Pages workflow builds from a tagged commit and publishes `SHA256SUMS.txt` at the site root. Build the same tag locally with the same public Google identifiers and compare the checksums.
 
 ## License
 

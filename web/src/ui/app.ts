@@ -9,6 +9,7 @@ import { t } from '../i18n';
 import type { UnlockOutcome } from '../protocol';
 import { UnlockFailed, Unlocker } from '../unlocker';
 import { clear, h } from './dom';
+import { mark } from './mark';
 
 interface Source {
   name: string;
@@ -26,7 +27,7 @@ export class App {
 
   constructor(root: HTMLElement) {
     this.main = h('main', { class: 'card' });
-    root.append(this.header(), this.main, this.footer());
+    root.append(this.banner(), h('div', { class: 'container' }, this.header(), this.main), this.footer());
   }
 
   async start(): Promise<void> {
@@ -41,11 +42,31 @@ export class App {
 
   // ---------------------------------------------------------------- layout
 
-  private header(): HTMLElement {
+  /** Inverse brand band: mark, wordmark, byline. */
+  private banner(): HTMLElement {
     return h(
       'header',
+      { class: 'band' },
+      h(
+        'div',
+        { class: 'band-inner' },
+        h(
+          'a',
+          { class: 'brand', href: '../', 'aria-label': t.title },
+          mark(26),
+          h('span', { class: 'wordmark' }, t.title),
+        ),
+        h('span', { class: 'byline' }, t.byline),
+      ),
+    );
+  }
+
+  private header(): HTMLElement {
+    return h(
+      'section',
       { class: 'intro' },
-      h('h1', {}, h('span', { class: 'logo', 'aria-hidden': 'true' }, '◇'), t.title),
+      h('p', { class: 'eyebrow' }, t.eyebrow),
+      h('h1', {}, t.headline),
       h('p', { class: 'tagline' }, t.tagline),
       h(
         'ul',
@@ -58,15 +79,19 @@ export class App {
   }
 
   private footer(): HTMLElement {
+    const links: [string, string][] = [
+      ['../privacy/', t.links.privacy],
+      ['../security/', t.links.security],
+      ['../terms/', t.links.terms],
+      ['../imprint/', t.links.imprint],
+      ['https://github.com/nullthrone/unpassword', t.source],
+    ];
     return h(
       'footer',
-      {},
+      { class: 'container' },
+      h('div', { class: 'double-rule', 'aria-hidden': 'true' }),
       h('details', {}, h('summary', {}, t.privacyTitle), h('ul', {}, ...t.privacy.map((p) => h('li', {}, p)))),
-      h(
-        'p',
-        { class: 'muted' },
-        h('a', { href: 'https://github.com/nullthrone/unpassword', rel: 'noopener' }, t.source),
-      ),
+      h('nav', { class: 'footer-links' }, ...links.map(([href, label]) => h('a', { href, rel: 'noopener' }, label))),
     );
   }
 
@@ -175,11 +200,11 @@ export class App {
       required: true,
     });
     const attest = h('input', { type: 'checkbox', id: 'attest', required: true });
-    const submit = h('button', { type: 'submit' }, t.submit);
+    const submit = h('button', { type: 'submit', class: 'accent' }, t.submit);
     const form = h(
       'form',
       { class: 'unlock', novalidate: false },
-      h('label', { for: 'password' }, t.password),
+      h('label', { for: 'password', class: 'field' }, t.password),
       pw,
       s.format === 'pdf' ? h('p', { class: 'hint muted' }, t.passwordHint) : null,
       h('label', { class: 'check' }, attest, h('span', {}, t.attest)),
@@ -260,7 +285,7 @@ export class App {
     const actions = h(
       'div',
       { class: 'actions' },
-      h('button', { type: 'button', onclick: () => this.download(name, mime) }, t.download),
+      h('button', { type: 'button', class: 'accent', onclick: () => this.download(name, mime) }, t.download),
     );
     let trashRow: HTMLElement | null = null;
 

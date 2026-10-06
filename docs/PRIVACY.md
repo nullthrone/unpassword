@@ -1,8 +1,12 @@
-# Privacy policy – unpassword
+# Privacy policy
 
 _Last updated: 2026-10-06_
 
 unpassword is designed so that its provider cannot access your data.
+
+## Controller
+
+Thomas Sprock, Am Kleikamp 26, 31319 Sehnde, Germany. Email: [github@nullthrone.xyz](mailto:github@nullthrone.xyz). See also the [imprint](IMPRINT.md).
 
 ## What unpassword processes
 
@@ -13,6 +17,7 @@ unpassword is designed so that its provider cannot access your data.
 ## What unpassword does not do
 
 - No analytics, telemetry, error reporting, cookies or tracking.
+- No third-party fonts or content delivery networks. Fonts are served from this site.
 - No storage of files, passwords or results in the browser (no localStorage/IndexedDB) or anywhere else.
 - No sharing or sale of data. The provider has none.
 
@@ -22,7 +27,21 @@ unpassword's use of information received from Google APIs adheres to the [Google
 
 ## Hosting
 
-The static web app is served by GitHub Pages. GitHub may log technical access data (IP address, time, requested file) as described in GitHub's privacy statement. These logs contain no file content or passwords.
+This website and the web app are static files served by GitHub Pages, operated by GitHub, Inc., USA. To deliver the pages, GitHub processes technical access data: IP address, time, requested file and browser identification. GitHub may store this data in server logs. The logs contain no file content and no passwords. The legal basis is Art. 6(1)(f) GDPR, our legitimate interest in delivering the site securely. Details are in the [GitHub General Privacy Statement](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement).
+
+The documentation pages contain no scripts. The web app loads scripts only from this site, and from Google only when you choose to use Google Drive.
+
+## Legal basis
+
+- Processing in your browser is not processing by the provider, who receives no data.
+- Google Drive and Gmail access happens at your request, to provide the function you asked for: Art. 6(1)(b) GDPR. The access is between your browser or Google account and Google.
+- Hosting: Art. 6(1)(f) GDPR, see above.
+
+## Your rights
+
+Under the GDPR you have the right of access (Art. 15), rectification (Art. 16), erasure (Art. 17), restriction of processing (Art. 18), data portability (Art. 20) and objection (Art. 21). Because the provider stores no personal data about you, these rights will usually concern GitHub or Google directly. Contact us at the address above for any request.
+
+You also have the right to lodge a complaint with a supervisory authority. For the provider, this is the [Landesbeauftragte für den Datenschutz Niedersachsen](https://www.lfd.niedersachsen.de).
 
 ## Revoking access
 
@@ -30,4 +49,4 @@ Remove unpassword's access at <https://myaccount.google.com/permissions>. Files 
 
 ## Contact
 
-Open an issue at <https://github.com/nullthrone/unpassword/issues>.
+Email [github@nullthrone.xyz](mailto:github@nullthrone.xyz), or open an issue at <https://github.com/nullthrone/unpassword/issues>.

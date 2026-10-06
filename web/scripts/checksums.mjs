@@ -1,9 +1,10 @@
-// Writes dist/SHA256SUMS.txt so anyone can compare the deployed site with a local build.
+// Writes <dir>/SHA256SUMS.txt so anyone can compare the deployed site with a local build.
 import { createHash } from 'node:crypto';
 import { readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
-import { join, relative } from 'node:path';
+import { join, relative, resolve } from 'node:path';
 
-const dist = join(import.meta.dirname, '..', 'dist');
+// Directory to hash: first argument, default web/dist.
+const dist = process.argv[2] ? resolve(process.argv[2]) : join(import.meta.dirname, '..', 'dist');
 const files = (dir) =>
   readdirSync(dir).flatMap((n) => {
     const p = join(dir, n);

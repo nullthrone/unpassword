@@ -37,6 +37,27 @@ jobs:
           path: web/test-results
           retention-days: 7
 
+  site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            web/package-lock.json
+            site/package-lock.json
+      - name: Build web app
+        working-directory: web
+        run: npm ci && npm run build
+      - name: Build and check documentation site
+        working-directory: site
+        run: |
+          npm ci
+          node build.mjs --out ../_site --app ../web/dist
+          node check.mjs --dir ../_site
+
   gmail-addon:
     runs-on: ubuntu-latest
     steps:

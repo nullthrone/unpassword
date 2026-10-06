@@ -9,6 +9,14 @@ unpassword bundles the following components into the web app.
 | [cfb](https://github.com/SheetJS/js-cfb) | Apache-2.0 | Compound File Binary parsing (encrypted Office containers) |
 | [@noble/ciphers](https://github.com/paulmillr/noble-ciphers), [@noble/hashes](https://github.com/paulmillr/noble-hashes) | MIT | AES, SHA-1/SHA-2, HMAC for Office decryption |
 
+The web app and the documentation site additionally include:
+
+| Component | License | Use |
+|---|---|---|
+| [Jost](https://github.com/indestructible-type/Jost), [Public Sans](https://github.com/uswds/public-sans), [JetBrains Mono](https://github.com/JetBrains/JetBrainsMono) | SIL Open Font License 1.1 (texts in `design/nullthrone/fonts/`) | Typefaces, self-hosted (files taken from Fontsource) |
+| Nullthrone Design System | Nullthrone, used by its owner | Design tokens and brand marks in `design/` |
+| [marked](https://github.com/markedjs/marked) | MIT | Build-time Markdown rendering of the documentation site (not shipped) |
+
 The test suite additionally contains three sample documents from [msoffcrypto-tool](https://github.com/nolze/msoffcrypto-tool) (MIT): `web/tests/fixtures/office/standard.docx`, `office-agile.docx` and `office-agile.xlsx`.
 
 The full license texts are in each package's `LICENSE` file in `web/node_modules` after `npm ci`, and at the linked repositories.

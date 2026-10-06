@@ -34,6 +34,8 @@ function csp(): Plugin {
 export default defineConfig({
   base: './',
   plugins: [csp()],
+  // design tokens, fonts and the mark live in ../design (shared with the docs site)
+  server: { fs: { allow: ['..'] } },
   build: {
     target: 'es2022',
     sourcemap: false,

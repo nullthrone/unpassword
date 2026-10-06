@@ -1,0 +1,325 @@
+<section class="hero band">
+  <div class="wrap hero-inner">
+    <div class="hero-copy">
+      <p class="eyebrow">Open source · MIT license · by Nullthrone</p>
+      <h1>Remove passwords you already know.</h1>
+      <p class="lede">
+        unpassword removes the password protection of PDF, Office and ZIP files
+        in your browser, so you can archive them under protection you control.
+        The password never leaves your device. Neither does the file.
+      </p>
+      <div class="cta">
+        <a class="button accent" href="app/">Open unpassword</a>
+        <a class="button outline-inverse" href="{{REPO}}" rel="noopener"
+          >Read the source</a
+        >
+      </div>
+    </div>
+    <div class="hero-mark" aria-hidden="true">{{MARK}}</div>
+  </div>
+</section>
+
+<section class="facts">
+  <div class="wrap facts-inner">
+    <div>
+      <span class="fact">No server</span
+      ><span
+        >Decryption runs in a web worker on your device. There is no backend to
+        trust.</span
+      >
+    </div>
+    <div>
+      <span class="fact">No guessing</span
+      ><span
+        >One typed password per attempt. Failed attempts slow down and
+        lock.</span
+      >
+    </div>
+    <div>
+      <span class="fact">No tracking</span
+      ><span
+        >No analytics, no cookies, no third-party fonts. This page loads no
+        scripts.</span
+      >
+    </div>
+  </div>
+</section>
+
+<section class="section wrap" id="how-it-works">
+  <p class="eyebrow">How it works</p>
+  <h2>Three steps. One password. Your archive.</h2>
+  <div class="double-rule" aria-hidden="true"></div>
+  <ol class="steps">
+    <li>
+      <span class="step-no">01</span>
+      <h3>Select the file</h3>
+      <p>
+        Drop it into the web app, pick it from Google Drive, use
+        <em>Open with</em> in Drive, or open a Gmail attachment through the
+        add-on.
+      </p>
+    </li>
+    <li>
+      <span class="step-no">02</span>
+      <h3>Enter the password</h3>
+      <p>
+        Use the password you were given. unpassword checks it against the file’s
+        own encryption. It does not try alternatives.
+      </p>
+    </li>
+    <li>
+      <span class="step-no">03</span>
+      <h3>Archive your way</h3>
+      <p>
+        Download the unlocked file, or save it next to the original in Drive.
+        Protect it with your account security instead of a sender’s file
+        password.
+      </p>
+    </li>
+  </ol>
+</section>
+
+<section class="section wrap split" id="zero-knowledge">
+  <div>
+    <p class="eyebrow">Architecture</p>
+    <h2>Zero knowledge, by construction.</h2>
+    <p>
+      unpassword is a static web app. Its provider hosts files and nothing else.
+      No server receives your document, your password or the decrypted result.
+    </p>
+    <ul class="ticks">
+      <li>
+        Decryption runs in an isolated web worker: qpdf compiled to WebAssembly
+        for PDF, the ECMA-376 algorithms for Office, zip.js for archives.
+      </li>
+      <li>
+        A Content Security Policy lets the app talk only to its own origin and
+        to Google’s APIs. The browser blocks everything else.
+      </li>
+      <li>
+        Drive access uses the <code>drive.file</code> scope: only files you
+        select or that unpassword creates.
+      </li>
+      <li>
+        The Gmail add-on handles the encrypted attachment only. It never sees a
+        password.
+      </li>
+    </ul>
+    <p><a href="security/">Read the security model</a></p>
+  </div>
+  <figure class="diagram">
+    <svg viewBox="0 0 480 400" role="img" aria-labelledby="dg-title dg-desc">
+      <title id="dg-title">Data flow</title>
+      <desc id="dg-desc">
+        The browser decrypts locally and exchanges files only with Google Drive.
+        The Gmail add-on stores the encrypted attachment in Drive. The
+        unpassword provider only serves static files and receives no data.
+      </desc>
+      <defs>
+        <marker
+          id="arrow"
+          viewBox="0 0 8 8"
+          refX="7"
+          refY="4"
+          markerWidth="8"
+          markerHeight="8"
+          orient="auto-start-reverse"
+        >
+          <path d="M0,0 L8,4 L0,8 Z" class="dg-fill" />
+        </marker>
+      </defs>
+      <rect x="10" y="10" width="250" height="210" class="dg-box-strong" />
+      <text x="26" y="36" class="dg-label">Your browser</text>
+      <rect x="30" y="56" width="210" height="96" class="dg-box-accent" />
+      <text x="46" y="82" class="dg-label">Web worker</text>
+      <text x="46" y="106" class="dg-text">password · decryption</text>
+      <text x="46" y="126" class="dg-text">plaintext in memory only</text>
+      <text x="26" y="182" class="dg-text">UI · download</text>
+      <text x="26" y="202" class="dg-text">CSP: own origin + Google APIs</text>
+
+      <rect x="320" y="10" width="150" height="120" class="dg-box" />
+      <text x="336" y="36" class="dg-label">Google</text>
+      <text x="336" y="60" class="dg-text">Drive API</text>
+      <text x="336" y="80" class="dg-text">OAuth · Picker</text>
+      <text x="336" y="110" class="dg-text">your files</text>
+
+      <rect x="320" y="170" width="150" height="70" class="dg-box" />
+      <text x="336" y="196" class="dg-label">Gmail add-on</text>
+      <text x="336" y="220" class="dg-text">encrypted only</text>
+
+      <line
+        x1="262"
+        y1="60"
+        x2="316"
+        y2="60"
+        class="dg-line"
+        marker-end="url(#arrow)"
+        marker-start="url(#arrow)"
+      />
+      <line
+        x1="395"
+        y1="168"
+        x2="395"
+        y2="134"
+        class="dg-line"
+        marker-end="url(#arrow)"
+      />
+
+      <rect x="10" y="290" width="460" height="96" class="dg-box-dashed" />
+      <text x="26" y="318" class="dg-label">unpassword provider</text>
+      <text x="26" y="344" class="dg-text">
+        serves static files (GitHub Pages)
+      </text>
+      <text x="26" y="366" class="dg-text">
+        receives no files, passwords or results
+      </text>
+      <line
+        x1="135"
+        y1="288"
+        x2="135"
+        y2="224"
+        class="dg-line-faint"
+        marker-end="url(#arrow)"
+      />
+      <text x="145" y="262" class="dg-small">code only</text>
+    </svg>
+  </figure>
+</section>
+
+<section class="section-inverse band" id="guardrails">
+  <div class="wrap split">
+    <div>
+      <p class="eyebrow">Guardrails</p>
+      <h2>Not a cracking tool.</h2>
+      <p>
+        unpassword exists for files you are entitled to open. It is built to be
+        useless against files you are not.
+      </p>
+    </div>
+    <ul class="guardrails">
+      <li>
+        <strong>One password per attempt.</strong> Typed by you. No lists, no
+        imports, no generators.
+      </li>
+      <li>
+        <strong>Rate limited.</strong> Two free failures, then 5 s, 10 s, 20 s …
+        and a lock after ten.
+      </li>
+      <li>
+        <strong>Restrictions are kept.</strong> A PDF’s open password removes
+        the open protection only. Print and copy restrictions stay unless you
+        enter the owner password.
+      </li>
+      <li>
+        <strong>Nothing to crack offline.</strong> Hashes, verifiers and salts
+        are never exported.
+      </li>
+      <li>
+        <strong>No bypassing.</strong> DRM, certificate protection and sheet
+        protection are refused.
+      </li>
+      <li>
+        <strong>Stated plainly.</strong> These limits run on your device and are
+        not a cryptographic boundary. unpassword adds no attack capability: the
+        work an attacker faces is the same with or without it.
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section class="section wrap" id="formats">
+  <p class="eyebrow">Formats</p>
+  <h2>What unpassword unlocks.</h2>
+  <div class="double-rule" aria-hidden="true"></div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Format</th>
+          <th>Protection</th>
+          <th>Result</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>PDF</td>
+          <td>Standard security handler: RC4, AES-128, AES-256</td>
+          <td>
+            Open password removed. Restrictions kept unless the owner password
+            is supplied.
+          </td>
+        </tr>
+        <tr>
+          <td>DOCX · XLSX · PPTX</td>
+          <td>ECMA-376 Agile and Standard encryption</td>
+          <td>Unencrypted Office document, integrity-checked</td>
+        </tr>
+        <tr>
+          <td>ZIP</td>
+          <td>ZipCrypto, WinZip AES-128/192/256</td>
+          <td>Unencrypted ZIP with the same entries, every entry verified</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="muted">
+    Not supported: legacy .doc/.xls/.ppt, 7z and RAR, DRM, certificate-based
+    protection, worksheet protection.
+  </p>
+</section>
+
+<section class="section wrap" id="get-it">
+  <p class="eyebrow">Get it</p>
+  <h2>Where unpassword runs.</h2>
+  <div class="double-rule" aria-hidden="true"></div>
+  <div class="cards">
+    <article class="card">
+      <p class="eyebrow">Web app</p>
+      <h3>In any browser</h3>
+      <p>
+        Open the app and drop a file. No account needed. Nothing is uploaded.
+      </p>
+      <p class="card-foot"><a href="app/">Open the web app</a></p>
+    </article>
+    <article class="card">
+      <p class="eyebrow">Google Drive</p>
+      <h3>Open with unpassword</h3>
+      <p>
+        After installing from the Google Workspace Marketplace, right-click a
+        protected file in Drive and choose <em>Open with → unpassword</em>.
+      </p>
+      <p class="card-foot">Requires the <code>drive.file</code> scope</p>
+    </article>
+    <article class="card">
+      <p class="eyebrow">Gmail</p>
+      <h3>From an attachment</h3>
+      <p>
+        The add-on lists protected attachments of the open message and hands the
+        still-encrypted file to the web app via Drive.
+      </p>
+      <p class="card-foot">Reads the open message only</p>
+    </article>
+  </div>
+  <p class="muted">
+    Administrators and self-hosters: see the <a href="setup/">setup guide</a>.
+  </p>
+</section>
+
+<section class="section wrap verify" id="verify">
+  <div>
+    <p class="eyebrow">Verify</p>
+    <h2>Check what you run.</h2>
+  </div>
+  <div>
+    <p>
+      Every deployment is built by GitHub Actions from a tagged commit. The
+      checksums of all published files are listed in
+      <a href="SHA256SUMS.txt"><code>SHA256SUMS.txt</code></a
+      >. Build the same tag yourself, with the same public Google identifiers,
+      and compare the <code>app/</code> entries.
+    </p>
+    <pre><code>git clone {{REPO}}
+cd unpassword/web &amp;&amp; npm ci &amp;&amp; npm run build
+sha256sum dist/assets/*</code></pre>
+  </div>
+</section>

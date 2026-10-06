@@ -23,16 +23,19 @@ None of these three values is secret. They end up in the public JavaScript bundl
 
 1. In the repository settings, go to *Pages* and set *Source* to **GitHub Actions**.
 2. In *Settings → Secrets and variables → Actions → Variables*, add `GOOGLE_CLIENT_ID`, `GOOGLE_API_KEY` and `GOOGLE_APP_ID`.
-3. Push a tag `v*` (e.g. `v0.1.0`). `.github/workflows/pages.yml` builds `web/` and deploys it to `https://<user>.github.io/unpassword/`. `SHA256SUMS.txt` is published alongside and attached to the workflow run.
+3. Push a tag `v*` (e.g. `v0.1.0`), or run the workflow manually. `.github/workflows/pages.yml` builds the web app and the documentation site, then deploys both:
+   - `https://<user>.github.io/unpassword/` – documentation site (`site/`, rendered from `docs/`)
+   - `https://<user>.github.io/unpassword/app/` – the web app (`web/`)
+   - `https://<user>.github.io/unpassword/SHA256SUMS.txt` – checksums of every published file, also attached to the workflow run
 
-To host elsewhere, serve `web/dist/` statically. If your server can set headers, also send the CSP from `web/vite.config.ts` as an HTTP header, plus `frame-ancestors 'none'`.
+To host elsewhere, build the same way (`site/build.mjs --app web/dist`) and serve `_site/` statically. If your server can set headers, also send the CSP from `web/vite.config.ts` as an HTTP header, plus `frame-ancestors 'none'`.
 
 ## 3. Drive "Open with" integration
 
 In the Cloud console, open *Google Workspace Marketplace SDK* and then *App Configuration*:
 
 1. Enable **Drive app** integration.
-2. **Open URL:** `https://<user>.github.io/unpassword/`. Drive appends `?state={"ids":[…],"action":"open",…}`, which the app reads (`web/src/google/drive.ts` → `launchFileId`).
+2. **Open URL:** `https://<user>.github.io/unpassword/app/`. Drive appends `?state={"ids":[…],"action":"open",…}`, which the app reads (`web/src/google/drive.ts` → `launchFileId`).
 3. **Default MIME types:** `application/pdf`, `application/zip`
    **Secondary MIME types:** `application/x-zip-compressed`, `application/octet-stream`, `application/x-ole-storage`, `application/vnd.ms-office`, `application/encrypted`, `application/vnd.openxmlformats-officedocument.wordprocessingml.document`, `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`, `application/vnd.openxmlformats-officedocument.presentationml.presentation`
    **File extensions:** `pdf`, `zip`, `docx`, `xlsx`, `pptx`, `docm`, `xlsm`, `pptm`
@@ -49,14 +52,32 @@ clasp push
 ```
 
 1. In the Apps Script editor, open *Project Settings* and set the **Google Cloud Platform project** to the project number from step 1 (same project as the web app).
-2. Optionally, in *Project Settings → Script properties*, set `UNPASSWORD_WEB_URL` if the web app is not at `https://nullthrone.github.io/unpassword/`. Update `openLinkUrlPrefixes` and `logoUrl` in `appsscript.json` to match.
+2. Optionally, in *Project Settings → Script properties*, set `UNPASSWORD_WEB_URL` if the web app is not at `https://nullthrone.github.io/unpassword/app/`. Update `openLinkUrlPrefixes` and `logoUrl` in `appsscript.json` to match.
 3. Choose *Deploy → Test deployments → Install* and open a message with a protected attachment in Gmail.
 4. For Marketplace publication, add the deployment ID under *Marketplace SDK → App Configuration → Gmail add-on*.
 
 ## 5. Marketplace listing
 
-- Category: *Productivity / Utilities*. Describe the legitimate purpose plainly: removing **known** passwords for personal archiving.
-- Link the privacy policy, terms (MIT license) and support URL (GitHub issues).
+The documentation site is the listing's reference. Use these values in *Marketplace SDK → Store Listing* and on the OAuth consent screen:
+
+| Field | Value |
+|---|---|
+| Application name | unpassword |
+| Short description | Remove passwords you already know from PDF, Office and ZIP files – decrypted in your browser, zero-knowledge. |
+| Category | Productivity / Utilities |
+| Application homepage / Developer website | `https://nullthrone.github.io/unpassword/` |
+| Privacy policy URL | `https://nullthrone.github.io/unpassword/privacy/` |
+| Terms of service URL | `https://nullthrone.github.io/unpassword/terms/` |
+| Support URL | `https://nullthrone.github.io/unpassword/support/` |
+| Developer name / email | Nullthrone · Thomas Sprock, `github@nullthrone.xyz` (see `/imprint/`) |
+| Application icons 32/48/96/128 | `brand/icon-32.png`, `icon-48.png`, `icon-96.png`, `icon-128.png` |
+| Card banner 220 × 140 | `brand/banner-220x140.png` |
+| Screenshots 1280 × 800 | `brand/screenshot-1-pick.png`, `-2-password.png`, `-3-result.png` |
+| Authorized domain (OAuth consent) | `nullthrone.github.io` |
+
+All graphics are listed with previews on `/marketplace/`. They are generated from `design/unpassword/` by `scripts/render-brand-assets.mjs`; rerun it after changing the mark or the app's look.
+
+- In the description, state the legitimate purpose plainly: removing **known** passwords for personal archiving. The guardrails on the homepage are written to be quoted in the review.
 - Expect an OAuth verification for the Gmail scopes. `drive.file` is a non-sensitive scope.
 
 ## 6. Check after deployment
