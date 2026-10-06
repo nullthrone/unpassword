@@ -1,0 +1,26 @@
+{
+  "timeZone": "Europe/Berlin",
+  "runtimeVersion": "V8",
+  "exceptionLogging": "NONE",
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/gmail.addons.execute",
+    "https://www.googleapis.com/auth/gmail.addons.current.message.readonly",
+    "https://www.googleapis.com/auth/drive.file"
+  ],
+  "dependencies": {
+    "enabledAdvancedServices": [{ "userSymbol": "Drive", "serviceId": "drive", "version": "v3" }]
+  },
+  "urlFetchWhitelist": [],
+  "addOns": {
+    "common": {
+      "name": "unpassword",
+      "logoUrl": "https://nullthrone.github.io/unpassword/icon-128.png",
+      "layoutProperties": { "primaryColor": "#2b6cb0" },
+      "openLinkUrlPrefixes": ["https://nullthrone.github.io/unpassword/"],
+      "useLocaleFromApp": true
+    },
+    "gmail": {
+      "contextualTriggers": [{ "unconditional": {}, "onTriggerFunction": "onGmailMessageOpen" }]
+    }
+  }
+}

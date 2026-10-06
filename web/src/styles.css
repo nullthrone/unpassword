@@ -1,0 +1,278 @@
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --text: #1a1d21;
+  --muted: #5d6673;
+  --border: #d9dee5;
+  --accent: #2b6cb0;
+  --accent-text: #ffffff;
+  --success-bg: #e8f5ee;
+  --success: #1e6b43;
+  --warning-bg: #fff6e0;
+  --warning: #7a5300;
+  --error-bg: #fdecec;
+  --error: #a32121;
+  --radius: 10px;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #111418;
+    --surface: #1a1f25;
+    --text: #e6e9ed;
+    --muted: #9aa4b1;
+    --border: #2e3640;
+    --accent: #6ea8e8;
+    --accent-text: #0d1014;
+    --success-bg: #12301f;
+    --success: #8fd8ae;
+    --warning-bg: #33290d;
+    --warning: #f0cf7a;
+    --error-bg: #3a1616;
+    --error: #f2a3a3;
+    color-scheme: dark;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font:
+    16px/1.5 system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+}
+
+#app {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 32px 16px 48px;
+}
+
+h1 {
+  margin: 0 0 4px;
+  font-size: 1.75rem;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo {
+  color: var(--accent);
+}
+
+.tagline {
+  margin: 0 0 12px;
+  color: var(--muted);
+}
+
+.principles {
+  margin: 0 0 24px;
+  padding-left: 1.2em;
+  color: var(--muted);
+  font-size: 0.925rem;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 32px 16px;
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  text-align: center;
+}
+
+.dropzone:hover,
+.dropzone.over,
+#file:focus-visible + .dropzone {
+  border-color: var(--accent);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.file {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.file .name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.badge {
+  flex: none;
+  font-size: 0.8rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+}
+
+form.unlock {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+label {
+  font-weight: 600;
+}
+
+input[type='password'] {
+  font: inherit;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  width: 100%;
+}
+
+input[type='password']:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.check {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-weight: 400;
+}
+
+.check input {
+  margin-top: 4px;
+}
+
+button {
+  font: inherit;
+  font-weight: 600;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--accent-text);
+  cursor: pointer;
+}
+
+button.secondary {
+  background: transparent;
+  color: var(--accent);
+}
+
+button.link {
+  align-self: flex-start;
+  border: none;
+  background: none;
+  color: var(--accent);
+  padding: 0;
+  font-weight: 400;
+  text-decoration: underline;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.hint,
+.muted {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.status {
+  margin: 0;
+  min-height: 1.5em;
+}
+
+.status.error {
+  color: var(--error);
+}
+
+.notice {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+}
+
+.notice.success {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.notice.warning {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.notice.error {
+  background: var(--error-bg);
+  color: var(--error);
+}
+
+a {
+  color: var(--accent);
+}
+
+footer {
+  margin-top: 24px;
+  font-size: 0.925rem;
+}
+
+footer summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+footer ul {
+  color: var(--muted);
+  padding-left: 1.2em;
+}
+
+.status:empty {
+  display: none;
+}
