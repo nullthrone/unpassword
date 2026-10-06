@@ -1,6 +1,6 @@
 # unpassword
 
-A Google Workspace app that removes the password protection of **PDF, Office (DOCX/XLSX/PPTX) and ZIP** files whose password you already know, so you can archive them under your own protection (account security, encrypted storage, access policies) instead of a sender's file password.
+A Google Workspace app that removes the password protection of **Office (DOCX/XLSX/PPTX), PDF files and compressed archives (ZIP)** whose password you already know, for archiving purposes: you can archive them under your own protection (account security, encrypted storage, access policies) instead of a sender's file password.
 
 **Zero-knowledge:** decryption and re-saving happen entirely in your browser. There is no backend. The provider of unpassword never receives your files, your passwords or the decrypted content.
 
