@@ -50,6 +50,12 @@ for (const f of files) {
   if (!/<title>[^<]+<\/title>/.test(html))
     errors.push(`${rel}: missing <title>`);
   if (/<script\b/i.test(html)) errors.push(`${rel}: contains a <script>`);
+  // the site lives on its own domain; the github.io address only redirects
+  // (naming the CNAME target without a scheme is fine)
+  if (/https?:\/\/nullthrone\.github\.io/.test(html))
+    errors.push(
+      `${rel}: references nullthrone.github.io instead of the custom domain`,
+    );
 
   for (const m of html.matchAll(
     /<(img|script|source|iframe)\b[^>]*\ssrc="([^"]+)"/g,
@@ -61,7 +67,7 @@ for (const f of files) {
     if (/^(https?:)?\/\//.test(m[1]))
       errors.push(`${rel}: external resource ${m[1]}`);
   }
-  if (rel === "404.html") continue; // absolute /unpassword/ links, checked via the other pages
+  if (rel === "404.html") continue; // root-absolute links, checked via the other pages
   for (const m of html.matchAll(/<a\b[^>]*\shref="([^"]+)"/g)) {
     const href = m[1];
     if (/^(https?:|mailto:)/.test(href)) continue;

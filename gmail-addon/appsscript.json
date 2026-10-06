@@ -14,10 +14,9 @@
   "addOns": {
     "common": {
       "name": "unpassword",
-      "logoUrl": "https://nullthrone.github.io/unpassword/brand/icon-128.png",
+      "logoUrl": "https://unpassword.nullthrone.xyz/brand/icon-128.png",
       "layoutProperties": { "primaryColor": "#141317", "secondaryColor": "#A87E2F" },
-      "openLinkUrlPrefixes": ["https://nullthrone.github.io/unpassword/app/"],
-      "useLocaleFromApp": true
+      "openLinkUrlPrefixes": ["https://unpassword.nullthrone.xyz/app/"]
     },
     "gmail": {
       "contextualTriggers": [{ "unconditional": {}, "onTriggerFunction": "onGmailMessageOpen" }]

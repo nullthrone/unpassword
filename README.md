@@ -2,7 +2,7 @@
 
 A Google Workspace app that removes the password protection of **Office (DOCX/XLSX/PPTX), PDF files and compressed archives (ZIP)** whose password you already know, for archiving purposes: you can archive them under your own protection (account security, encrypted storage, access policies) instead of a sender's file password.
 
-**Website and documentation:** <https://nullthrone.github.io/unpassword/>. The web app runs at [`/app/`](https://nullthrone.github.io/unpassword/app/).
+**Website and documentation:** <https://unpassword.nullthrone.xyz/>. The web app runs at [`/app/`](https://unpassword.nullthrone.xyz/app/).
 
 **Zero-knowledge:** decryption and re-saving happen entirely in your browser. There is no backend. The provider of unpassword never receives your files, your passwords or the decrypted content.
 

@@ -2,7 +2,7 @@
 
 _Last updated: 2026-10-06_
 
-These terms apply to the use of unpassword, which consists of the web application at `https://nullthrone.github.io/unpassword/app/` and the unpassword Gmail add-on. unpassword is provided by Thomas Sprock (Nullthrone), see the [imprint](IMPRINT.md).
+These terms apply to the use of unpassword, which consists of the web application at `https://unpassword.nullthrone.xyz/app/` and the unpassword Gmail add-on. unpassword is provided by Thomas Sprock (Nullthrone), see the [imprint](IMPRINT.md).
 
 ## 1. The service
 
