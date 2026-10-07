@@ -1,0 +1,28 @@
+name: Docs drift
+
+# Separate from CI because it also re-runs when the PR description is edited
+# (that is where "Docs-Impact: none – <reason>" may be declared).
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+
+permissions:
+  contents: read
+
+jobs:
+  docs-drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node --test scripts/docs-drift.test.mjs
+      - name: Check that documented behaviour changes come with documentation
+        run: node scripts/docs-drift.mjs --base "$BASE_SHA" --head "$HEAD_SHA"
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_BODY: ${{ github.event.pull_request.body }}

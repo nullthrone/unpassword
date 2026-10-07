@@ -68,7 +68,7 @@ web/            static web app (Vite + TypeScript, no UI framework)
 gmail-addon/    Apps Script Gmail launcher (never decrypts)
 site/           documentation site for GitHub Pages: renders docs/ and the landing page, no JavaScript
 design/         Nullthrone Design System tokens and fonts (self-hosted), the unpassword mark and its PNG renderings
-scripts/        fixture generator, cross-check, brand asset renderer
+scripts/        fixture generator, cross-check, brand asset renderer, docs drift check
 docs/           security model, privacy policy, terms, support, imprint, deployment setup
 ```
 
@@ -94,11 +94,13 @@ node check.mjs                     # CSP, no external resources, no broken links
 
 Brand assets (icons, banner, Marketplace screenshots) are rendered by `node scripts/render-brand-assets.mjs` after `npm run build` in `web/`.
 
+Changes that alter documented behaviour update the documentation in the same pull request; the *Docs drift* check enforces this. See [CONTRIBUTING.md](CONTRIBUTING.md#documentation).
+
 Drive integration needs `VITE_GOOGLE_CLIENT_ID`, `VITE_GOOGLE_API_KEY` and `VITE_GOOGLE_APP_ID` (see [docs/SETUP.md](docs/SETUP.md)). Without them the app runs in local mode only.
 
 ## Verifying a deployment
 
-The Pages workflow builds from a tagged commit and publishes `SHA256SUMS.txt` at the site root. Build the same tag locally with the same public Google identifiers and compare the checksums.
+The Pages workflow builds the web app from a release tag and publishes `BUILD.txt` and `SHA256SUMS.txt` at the site root. `BUILD.txt` names the release tag the app under `/app/` was built from and the commit the documentation site was built from (the same commit for a release; a later commit on `main` after a documentation-only deployment). Build the app from that tag with the same public Google identifiers, and the site from that commit, and compare the checksums.
 
 ## License
 
