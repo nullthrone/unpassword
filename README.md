@@ -45,6 +45,8 @@ PDFs have two passwords: the open (user) password and the permissions (owner) pa
 | owner password | any | fully decrypted |
 | – | owner password only, no open password | refused: lifting restrictions requires the owner password |
 
+One permission is not carried over: "content access for accessibility" (screen readers). PDF 2.0 deprecates it and requires readers to ignore it, so AES-256 cannot express it. Only old RC4 files (R2/R3) can deny it. unpassword treats it as granted. All other restrictions are kept.
+
 ## Guardrails
 
 unpassword is built so that it is useless for attacking files you have no password for:

@@ -1,5 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { unlockPdf } from '../src/core/pdf/index';
+import type { PdfCapabilities } from '../src/core/pdf/policy';
 import { inspectEncryption } from '../src/core/pdf/qpdf';
 import { UnpasswordError } from '../src/core/types';
 import { PW, fixture, useNodeQpdf } from './helpers';
@@ -41,14 +42,35 @@ describe('unlockPdf', () => {
     },
   );
 
-  it.each(['restricted-aes256.pdf', 'restricted-aes128.pdf', 'restricted-rc4.pdf', 'owner-only.pdf'])(
-    '%s: owner password fully decrypts',
+  it.each(['restricted-rc4-noaccess.pdf', 'restricted-rc4-40.pdf'])(
+    '%s: a denied accessibility permission does not block removing the open password',
     async (file) => {
-      const r = await unlockPdf(fixture(`pdf/${file}`), PW.pdfOwner);
-      expect(r.mode).toBe('decrypted');
-      expect((await inspectEncryption(r.data, ''))?.encrypted).toBe(false);
+      // PDF 2.0 deprecates the accessibility bit; the AES-256 copy cannot carry it
+      const original = await inspectEncryption(fixture(`pdf/${file}`), PW.pdfUser);
+      expect(original?.capabilities.accessibility).toBe(false);
+      const r = await unlockPdf(fixture(`pdf/${file}`), PW.pdfUser);
+      expect(r.mode).toBe('open-password-removed');
+      const after = await inspectEncryption(r.data, '');
+      expect(after).toMatchObject({ encrypted: true, userPasswordMatched: true, ownerPasswordMatched: false });
+      for (const [k, allowed] of Object.entries(original!.capabilities)) {
+        if (k !== 'accessibility' && !allowed) expect(after?.capabilities[k as keyof PdfCapabilities]).toBe(false);
+      }
+      expect(after?.capabilities.extract).toBe(false);
     },
   );
+
+  it.each([
+    'restricted-aes256.pdf',
+    'restricted-aes128.pdf',
+    'restricted-rc4.pdf',
+    'restricted-rc4-noaccess.pdf',
+    'restricted-rc4-40.pdf',
+    'owner-only.pdf',
+  ])('%s: owner password fully decrypts', async (file) => {
+    const r = await unlockPdf(fixture(`pdf/${file}`), PW.pdfOwner);
+    expect(r.mode).toBe('decrypted');
+    expect((await inspectEncryption(r.data, ''))?.encrypted).toBe(false);
+  });
 
   it('accepts the password regardless of how the producer encoded it', async () => {
     // R3/R4 fixtures store PDFDocEncoding bytes, R6 stores UTF-8

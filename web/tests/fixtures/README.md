@@ -10,6 +10,8 @@ All passwords are test values and intentionally public.
 | `pdf/restricted-aes256.pdf` | user `user-Pässwort1`, owner `owner-Pässwort2` | AES-256 (R6); no extract, low-res print only, no assembly, no other modification |
 | `pdf/restricted-aes128.pdf` | same | AES-128 (R4), same restrictions |
 | `pdf/restricted-rc4.pdf` | same | RC4-128 (R3), same restrictions |
+| `pdf/restricted-rc4-noaccess.pdf` | same | RC4-128 (R3), same restrictions plus accessibility denied |
+| `pdf/restricted-rc4-40.pdf` | same | RC4-40 (R2), same restrictions; R2 ties accessibility to extract |
 | `pdf/owner-only.pdf` | owner `owner-Pässwort2` (empty user password) | opens without password, restrictions only |
 | `office/plain.docx` | – | minimal unencrypted DOCX |
 | `office/agile.docx` | `Büro-Geheim 42` | ECMA-376 Agile (msoffcrypto-tool) |
