@@ -160,8 +160,16 @@ function finish(run: QpdfRun): Uint8Array {
   return run.output;
 }
 
+/**
+ * Write stream data as it is, only decrypted. Without this qpdf re-compresses
+ * streams it does not recognise as compressed (e.g. `/Filter [/FlateDecode]`)
+ * and aborts the whole write when one of them does not inflate, as happens
+ * when a producer left a stream unencrypted in an encrypted file.
+ */
+const PRESERVE_STREAMS = '--stream-data=preserve';
+
 export async function decryptPdf(input: Uint8Array, password: PasswordBytes): Promise<Uint8Array> {
-  return finish(await runQpdf(input, (i, o) => [...passwordArgs(password), '--decrypt', i, o]));
+  return finish(await runQpdf(input, (i, o) => [...passwordArgs(password), PRESERVE_STREAMS, '--decrypt', i, o]));
 }
 
 function yn(v: boolean): string {
@@ -197,6 +205,7 @@ export async function removeOpenPasswordKeepRestrictions(
   return finish(
     await runQpdf(input, (i, o) => [
       ...passwordArgs(password),
+      PRESERVE_STREAMS,
       i,
       '--encrypt',
       '--user-password=',

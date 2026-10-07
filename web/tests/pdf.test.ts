@@ -72,6 +72,18 @@ describe('unlockPdf', () => {
     expect((await inspectEncryption(r.data, ''))?.encrypted).toBe(false);
   });
 
+  it('unlocks a file in which the producer left a stream unencrypted', async () => {
+    // that stream does not inflate after decryption; it must not abort the unlock
+    const file = fixture('pdf/unencrypted-stream-aes256.pdf');
+    const restricted = await unlockPdf(file, PW.pdfUser);
+    expect(restricted.mode).toBe('open-password-removed');
+    expect((await inspectEncryption(restricted.data, ''))?.capabilities.extract).toBe(false);
+    const full = await unlockPdf(file, PW.pdfOwner);
+    expect(full.mode).toBe('decrypted');
+    expect((await inspectEncryption(full.data, ''))?.encrypted).toBe(false);
+    expect(new TextDecoder('latin1').decode(full.data)).toContain('(unpassword fixture)');
+  });
+
   it('accepts the password regardless of how the producer encoded it', async () => {
     // R3/R4 fixtures store PDFDocEncoding bytes, R6 stores UTF-8
     for (const f of ['restricted-rc4.pdf', 'restricted-aes128.pdf', 'restricted-aes256.pdf']) {
