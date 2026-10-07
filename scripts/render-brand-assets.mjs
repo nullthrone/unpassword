@@ -17,6 +17,7 @@ const { chromium } = require('@playwright/test');
 const INK = '#141317';
 const PAPER = '#F4F2EC';
 const BRASS = '#C09A4B';
+const BRASS_ICON = '#A87E2F'; // --brass-500
 
 const svg = (file) => readFileSync(join(ROOT, 'design/unpassword', file), 'utf8');
 // Fonts inlined as data URIs: pages rendered via setContent may not load file:// URLs.
@@ -46,11 +47,12 @@ async function shot(name, width, height, html) {
   console.log(`  ${name}`);
 }
 
-// Icons: ink square with the paper mark – legible on light and dark Marketplace backgrounds.
+// Icons: brass mark on a transparent background, as the Marketplace review requires.
+// Brass (an allowed mark colour) stays legible on light and dark surfaces, e.g. Gmail's dark theme.
 for (const size of [16, 32, 48, 96, 128]) {
   const file = size <= 32 ? 'mark-small.svg' : 'mark.svg';
-  const pad = Math.round(size * (size <= 32 ? 0.14 : 0.18));
-  const inner = `<div style="width:${size}px;height:${size}px;background:${INK};color:${PAPER};display:flex;align-items:center;justify-content:center">
+  const pad = Math.max(1, Math.round(size * 0.06));
+  const inner = `<div style="width:${size}px;height:${size}px;color:${BRASS_ICON};display:flex;align-items:center;justify-content:center">
     ${svg(file).replace('<svg ', `<svg width="${size - 2 * pad}" height="${size - 2 * pad}" `)}</div>`;
   await shot(`icon-${size}.png`, size, size, page(size, size, inner));
 }

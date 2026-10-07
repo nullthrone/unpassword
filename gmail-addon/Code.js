@@ -14,7 +14,7 @@
 /** Base URL of the web app. Override with the script property UNPASSWORD_WEB_URL. */
 function webAppUrl_() {
   var url = PropertiesService.getScriptProperties().getProperty('UNPASSWORD_WEB_URL');
-  return (url || 'https://nullthrone.github.io/unpassword/app/').replace(/\/?$/, '/');
+  return (url || 'https://unpassword.nullthrone.xyz/app/').replace(/\/?$/, '/');
 }
 
 var INBOX_FOLDER = 'unpassword – Eingang';

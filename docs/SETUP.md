@@ -1,47 +1,92 @@
-# Deployment setup
+# Deployment and Marketplace setup
 
-unpassword consists of a static web app and an optional Gmail add-on. Both must belong to the **same Google Cloud project**: `drive.file` grants are per project, and that is what lets the web app open the encrypted attachment the add-on stored.
+This guide takes unpassword from the repository to a public listing in the Google Workspace Marketplace. The listing contains both the web app with its Drive integration and the Gmail add-on.
 
-These steps need a Google account with access to the Cloud console and, for Marketplace publication, a Google Workspace Marketplace developer registration.
+The web app and the Gmail add-on must belong to the **same Google Cloud project**. `drive.file` grants are per project, and that is what lets the web app open the encrypted attachment the add-on stored.
 
-## 1. Google Cloud project
+| | Value |
+|---|---|
+| Site | `https://unpassword.nullthrone.xyz/` |
+| Web app | `https://unpassword.nullthrone.xyz/app/` |
+| Authorized domain | `nullthrone.xyz` |
+| Developer contact | `github@nullthrone.xyz` |
 
-1. Create a project in the [Cloud console](https://console.cloud.google.com/) and note its **project number**. That number is `VITE_GOOGLE_APP_ID`.
-2. Enable the **Google Drive API**, **Google Picker API**, **Gmail API** (for the add-on) and **Google Workspace Marketplace SDK**.
-3. **OAuth consent screen:** set the app name to *unpassword*, add the privacy policy URL (`docs/PRIVACY.md` on GitHub or a published copy) and the scopes:
-   - `https://www.googleapis.com/auth/drive.file`
-   - `https://www.googleapis.com/auth/gmail.addons.execute`
-   - `https://www.googleapis.com/auth/gmail.addons.current.message.readonly`
-4. **OAuth client ID** of type *Web application*:
-   - Authorized JavaScript origin: `https://<user>.github.io` (or your domain).
-   - This is `VITE_GOOGLE_CLIENT_ID`.
-5. **API key:** restrict it to *HTTP referrers* `https://<user>.github.io/*` (the app sends only its origin as referrer, `strict-origin`) and to the *Google Picker API*. This is `VITE_GOOGLE_API_KEY`.
+## 1. Domain
 
-None of these three values is secret. They end up in the public JavaScript bundle by design, and the restrictions above are what protect them.
+The site runs on GitHub Pages under its own domain. Google verifies the ownership of every domain the OAuth consent screen names, so it must be a domain you control. `github.io` does not qualify.
 
-## 2. Web app (GitHub Pages)
+1. **DNS (GoDaddy → nullthrone.xyz → DNS):** add a `CNAME` record with name `unpassword` and value `nullthrone.github.io`. Do not add A records or forwarding for the subdomain.
+2. **GitHub domain verification:** in GitHub, open organization *nullthrone* → *Settings* → *Pages* → *Add a domain* and enter `nullthrone.xyz`. Add the TXT record GitHub shows (`_github-pages-challenge-nullthrone`) at GoDaddy, then click *Verify*. This protects all subdomains from takeover.
+3. **Repository:** in *Settings* → *Pages*:
+   - set *Source* to **GitHub Actions**;
+   - set *Custom domain* to `unpassword.nullthrone.xyz`;
+   - enable **Enforce HTTPS** once it becomes available.
 
-1. In the repository settings, go to *Pages* and set *Source* to **GitHub Actions**.
-2. In *Settings → Secrets and variables → Actions → Variables*, add `GOOGLE_CLIENT_ID`, `GOOGLE_API_KEY` and `GOOGLE_APP_ID`.
-3. Push a tag `v*` (e.g. `v0.1.0`), or run the workflow manually. `.github/workflows/pages.yml` builds the web app and the documentation site, then deploys both:
-   - `https://<user>.github.io/unpassword/` – documentation site (`site/`, rendered from `docs/`)
-   - `https://<user>.github.io/unpassword/app/` – the web app (`web/`)
-   - `https://<user>.github.io/unpassword/SHA256SUMS.txt` – checksums of every published file, also attached to the workflow run
+   With an Actions deployment, no `CNAME` file is needed; GitHub uses this setting. The old `nullthrone.github.io/unpassword/` address redirects.
+4. **Google Search Console:** add a *Domain* property `nullthrone.xyz` and add the `google-site-verification=…` TXT record with name `@` at GoDaddy. Use an account that is owner or editor of the Cloud project.
+
+*"Domain is not eligible for HTTPS at this time"*: GitHub has not issued the certificate yet. This usually takes minutes to an hour. If it persists, remove the custom domain, wait a minute and enter it again; this starts a new certificate request. Check that `dig unpassword.nullthrone.xyz CNAME +short` returns `nullthrone.github.io.`.
+
+## 2. Google Cloud project
+
+1. Create a project in the [Cloud console](https://console.cloud.google.com/) and note its **project number**. That number is `GOOGLE_APP_ID`.
+2. Enable these APIs: **Google Drive API**, **Google Picker API**, **Gmail API** and **Google Workspace Marketplace SDK**.
+
+## 3. OAuth consent screen
+
+In *Google Auth Platform* (OAuth consent screen), fill in *Branding*, *Audience* and *Data access*:
+
+| Field | Value |
+|---|---|
+| App name | `unpassword` (must match the Marketplace listing exactly) |
+| User support email | `github@nullthrone.xyz` |
+| App logo | `brand/icon-128.png` |
+| Application home page | `https://unpassword.nullthrone.xyz/` |
+| Privacy policy | `https://unpassword.nullthrone.xyz/privacy/` |
+| Terms of service | `https://unpassword.nullthrone.xyz/terms/` |
+| Authorized domains | `nullthrone.xyz` |
+| Developer contact | `github@nullthrone.xyz` |
+| Audience | External, then *Publish app* to move to production |
+
+Add exactly these scopes, no more:
+
+| Scope | Used by | Purpose |
+|---|---|---|
+| `https://www.googleapis.com/auth/drive.file` | Web app, add-on | Open the file the user picked, create the unlocked copy, store the encrypted attachment |
+| `https://www.googleapis.com/auth/gmail.addons.execute` | Add-on | Run the add-on in Gmail |
+| `https://www.googleapis.com/auth/gmail.addons.current.message.readonly` | Add-on | Read the attachments of the open message to detect password protection |
+
+`gmail.addons.current.message.readonly` is a **sensitive** scope. That triggers the verification in step 7. The console shows the classification of each scope; go by what it says.
+
+## 4. Credentials
+
+1. **OAuth client ID** of type *Web application*:
+   - Authorized JavaScript origin: `https://unpassword.nullthrone.xyz`
+   - This value is `GOOGLE_CLIENT_ID`.
+2. **API key:**
+   - Application restriction *HTTP referrers*: `https://unpassword.nullthrone.xyz/*`. The app sends only its origin as referrer (`strict-origin`).
+   - API restriction: *Google Picker API* only.
+   - This value is `GOOGLE_API_KEY`.
+3. In the repository, under *Settings* → *Secrets and variables* → *Actions* → **Variables**, add `GOOGLE_CLIENT_ID`, `GOOGLE_API_KEY` and `GOOGLE_APP_ID`.
+
+None of these values is secret. They end up in the public JavaScript bundle by design, and the restrictions above are what protect them.
+
+## 5. Deploy the site and the web app
+
+Push a tag `v*` (e.g. `v0.1.0`), or run *Actions* → *Deploy to GitHub Pages* → *Run workflow*. `.github/workflows/pages.yml` builds the web app and the documentation site, then deploys both:
+
+- `/` – documentation site (`site/`, rendered from `docs/`)
+- `/app/` – the web app (`web/`)
+- `/SHA256SUMS.txt` – checksums of every published file, also attached to the workflow run
+
+Then check the deployment:
+
+- **Local mode:** drop a protected file and unlock it. In the browser's network panel, verify that no request leaves the page's origin.
+- **Drive:** pick a protected PDF with *Choose from Google Drive*, unlock it and save it. The new file appears next to the original, or in My Drive if the folder is not writable for unpassword.
 
 To host elsewhere, build the same way (`site/build.mjs --app web/dist`) and serve `_site/` statically. If your server can set headers, also send the CSP from `web/vite.config.ts` as an HTTP header, plus `frame-ancestors 'none'`.
 
-## 3. Drive "Open with" integration
-
-In the Cloud console, open *Google Workspace Marketplace SDK* and then *App Configuration*:
-
-1. Enable **Drive app** integration.
-2. **Open URL:** `https://<user>.github.io/unpassword/app/`. Drive appends `?state={"ids":[…],"action":"open",…}`, which the app reads (`web/src/google/drive.ts` → `launchFileId`).
-3. **Default MIME types:** `application/pdf`, `application/zip`
-   **Secondary MIME types:** `application/x-zip-compressed`, `application/octet-stream`, `application/x-ole-storage`, `application/vnd.ms-office`, `application/encrypted`, `application/vnd.openxmlformats-officedocument.wordprocessingml.document`, `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`, `application/vnd.openxmlformats-officedocument.presentationml.presentation`
-   **File extensions:** `pdf`, `zip`, `docx`, `xlsx`, `pptx`, `docm`, `xlsm`, `pptm`
-4. Leave "Creating files" disabled. unpassword only opens existing files.
-
-## 4. Gmail add-on
+## 6. Gmail add-on
 
 ```bash
 npm install -g @google/clasp
@@ -51,37 +96,128 @@ clasp create --type standalone --title unpassword   # or copy .clasp.json.exampl
 clasp push
 ```
 
-1. In the Apps Script editor, open *Project Settings* and set the **Google Cloud Platform project** to the project number from step 1 (same project as the web app).
-2. Optionally, in *Project Settings → Script properties*, set `UNPASSWORD_WEB_URL` if the web app is not at `https://nullthrone.github.io/unpassword/app/`. Update `openLinkUrlPrefixes` and `logoUrl` in `appsscript.json` to match.
-3. Choose *Deploy → Test deployments → Install* and open a message with a protected attachment in Gmail.
-4. For Marketplace publication, add the deployment ID under *Marketplace SDK → App Configuration → Gmail add-on*.
+1. In the Apps Script editor, open *Project Settings* and set the **Google Cloud Platform project** to the project number from step 2.
+2. *Deploy* → *Test deployments* → *Install*. Open a message with a protected attachment in Gmail and choose *Open in unpassword*. The encrypted copy lands in the Drive folder "unpassword – Eingang", and the web app opens it.
+3. *Deploy* → *New deployment* → type *Add-on*, with a description such as `v1`. This creates a **versioned** deployment; the Marketplace does not accept the HEAD deployment. Note the **deployment ID**.
 
-## 5. Marketplace listing
+The add-on's web app URL defaults to `https://unpassword.nullthrone.xyz/app/`. To use another host, set the script property `UNPASSWORD_WEB_URL` and update `openLinkUrlPrefixes` and `logoUrl` in `appsscript.json`.
 
-The documentation site is the listing's reference. Use these values in *Marketplace SDK → Store Listing* and on the OAuth consent screen:
+## 7. OAuth verification (sensitive scope)
+
+In *Google Auth Platform* → *Verification Center*, submit the app for verification. Google asks for a justification per sensitive scope and a demo video.
+
+### Scope justifications
+
+These texts can be pasted as they are.
+
+**`gmail.addons.current.message.readonly`**
+
+> unpassword's Gmail add-on shows, for the message the user has open, which attachments are password-protected PDF, Office or ZIP files. It reads only the attachments of that open message, and only to check their format and encryption flag locally in Apps Script. When the user clicks "Open in unpassword", the add-on copies the still-encrypted attachment into a Drive folder created by the app (drive.file) and opens the unpassword web app. Decryption happens exclusively in the user's browser with a password the user types. The add-on never receives passwords or decrypted content, and no message data is sent to the developer or any third party. A narrower scope is not available, because the add-on needs the attachment bytes to detect encryption.
+
+**`drive.file`** (non-sensitive, for completeness)
+
+> Used to open files the user explicitly picks or opens with unpassword, to save the unlocked copy the user requests, and to store encrypted Gmail attachments in a folder the app creates. unpassword has no access to any other Drive file.
+
+**`gmail.addons.execute`**
+
+> Required to run the Gmail add-on, which displays the list of protected attachments in the side panel of the open message.
+
+### Demo video
+
+Upload the video to YouTube as *Unlisted*, 2–4 minutes long, in English or with English captions. Storyboard:
+
+1. **Consent:** start in Gmail and install or authorize the add-on. Show the OAuth consent screen with the app name **unpassword** and the URL bar containing the **client ID**. Read out the requested scopes.
+2. **`gmail.addons.current.message.readonly`:** open a message with a password-protected PDF attachment. The side panel lists it as "password protected". Explain that only this open message is read.
+3. **`drive.file`:** click *Open in unpassword*. Show the encrypted copy in the Drive folder "unpassword – Eingang", which the app created. Then show that unpassword cannot see other Drive files: the Picker shows them, but the app only receives what the user selects.
+4. **Web app:** the app opens with the file. Enter the password and tick the entitlement checkbox. The file is unlocked in the browser. Save it to Drive and show the unlocked copy.
+5. **Zero knowledge:** open the browser's network panel and show that requests go only to the site's origin and Google APIs. State that the password and the content never reach the developer.
+6. **Guardrails:** enter a wrong password three times and show the cooldown. State that unpassword does not guess passwords.
+
+### Expectations
+
+- Keep the homepage, privacy policy and terms reachable, and keep them identical to the URLs on the consent screen.
+- Google may ask follow-up questions by email to the developer contact. Answer from the security model (`/security/`).
+- Verification of sensitive scopes takes from several days to a few weeks.
+
+## 8. Marketplace SDK → App Configuration
+
+| Setting | Value |
+|---|---|
+| App visibility | Public |
+| Installation settings | Individual + Admin install |
+| App integrations | **Drive app** and **Google Workspace add-on** |
+| OAuth scopes | Exactly the three scopes from step 3 |
+| Developer information | Nullthrone · Thomas Sprock, `github@nullthrone.xyz`, website `https://unpassword.nullthrone.xyz/` |
+
+**Google Workspace add-on:** enter the deployment ID from step 6.
+
+**Drive app:**
+
+1. **Open URL:** `https://unpassword.nullthrone.xyz/app/`. Drive appends `?state={"ids":[…],"action":"open",…}`, which the app reads (`web/src/google/drive.ts` → `launchFileId`).
+2. **Default MIME types:** `application/pdf`, `application/zip`.
+   **Secondary MIME types:** `application/x-zip-compressed`, `application/octet-stream`, `application/x-ole-storage`, `application/vnd.ms-office`, `application/encrypted`, `application/vnd.openxmlformats-officedocument.wordprocessingml.document`, `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`, `application/vnd.openxmlformats-officedocument.presentationml.presentation`.
+   **File extensions:** `pdf`, `zip`, `docx`, `xlsx`, `pptx`, `docm`, `xlsm`, `pptm`.
+3. Leave "Creating files" disabled. unpassword only opens existing files.
+4. Icons: `brand/icon-32.png`, `brand/icon-128.png`.
+
+## 9. Store listing
 
 | Field | Value |
 |---|---|
 | Application name | unpassword |
-| Short description | Remove passwords you already know from PDF, Office and ZIP files – decrypted in your browser, zero-knowledge. |
+| Short description | see below (≤ 200 characters) |
+| Detailed description | see below |
 | Category | Productivity / Utilities |
-| Application homepage / Developer website | `https://nullthrone.github.io/unpassword/` |
-| Privacy policy URL | `https://nullthrone.github.io/unpassword/privacy/` |
-| Terms of service URL | `https://nullthrone.github.io/unpassword/terms/` |
-| Support URL | `https://nullthrone.github.io/unpassword/support/` |
-| Developer name / email | Nullthrone · Thomas Sprock, `github@nullthrone.xyz` (see `/imprint/`) |
-| Application icons 32/48/96/128 | `brand/icon-32.png`, `icon-48.png`, `icon-96.png`, `icon-128.png` |
+| Language | English |
+| Application icons | `brand/icon-32.png`, `icon-48.png`, `icon-96.png`, `icon-128.png` (transparent background) |
 | Card banner 220 × 140 | `brand/banner-220x140.png` |
-| Screenshots 1280 × 800 | `brand/screenshot-1-pick.png`, `-2-password.png`, `-3-result.png` |
-| Authorized domain (OAuth consent) | `nullthrone.github.io` |
+| Screenshots 1280 × 800 | `brand/screenshot-1-pick.png`, `brand/screenshot-2-password.png`, `brand/screenshot-3-result.png` |
+| Terms of service URL | `https://unpassword.nullthrone.xyz/terms/` |
+| Privacy policy URL | `https://unpassword.nullthrone.xyz/privacy/` |
+| Support URL | `https://unpassword.nullthrone.xyz/support/` |
+| Setup / admin documentation | `https://unpassword.nullthrone.xyz/setup/` |
+| Pricing | Free |
 
-All graphics are listed with previews on `/marketplace/`. They are generated from `design/unpassword/` by `scripts/render-brand-assets.mjs`; rerun it after changing the mark or the app's look.
+All graphics, with previews, are on [`/marketplace/`](https://unpassword.nullthrone.xyz/marketplace/). `scripts/render-brand-assets.mjs` generates them from `design/unpassword/`; rerun it after changing the mark or the app's look.
 
-- In the description, state the legitimate purpose plainly: removing **known** passwords for personal archiving. The guardrails on the homepage are written to be quoted in the review.
-- Expect an OAuth verification for the Gmail scopes. `drive.file` is a non-sensitive scope.
+**Short description** (168 characters):
 
-## 6. Check after deployment
+> Remove passwords you already know from PDF, Office and ZIP files to archive them your way. Decrypted in your browser – the developer never sees your files or passwords.
 
-- Local mode: drop a protected file and unlock it. In the browser's network panel, verify that no request leaves the page's origin.
-- Drive: use "Open with → unpassword" on a protected PDF in Drive, then save. The new file should appear next to the original.
-- Gmail: open a message with a protected ZIP, choose *Open in unpassword*, and confirm that the encrypted copy lands in "unpassword – Eingang" and the web app opens it.
+**Detailed description:**
+
+> unpassword removes the password protection of PDF, Word, Excel, PowerPoint and ZIP files whose password you know – for example statements, payslips or reports sent to you with a password. Archive them under protection you control, such as your Google account, instead of a sender's file password.
+>
+> HOW IT WORKS
+> • Open a protected file from Google Drive ("Open with → unpassword"), from a Gmail attachment, or from your device.
+> • Enter the password you were given.
+> • Download the unlocked file or save it next to the original in Drive.
+>
+> ZERO KNOWLEDGE
+> • Decryption runs entirely in your browser. There is no unpassword server.
+> • Files and passwords are never sent to the developer.
+> • Drive access is limited to files you open with unpassword (drive.file).
+> • The Gmail add-on reads only the open message and hands over the still-encrypted attachment.
+>
+> NOT A CRACKING TOOL
+> • You need the current password. unpassword never guesses or bypasses passwords.
+> • Failed attempts are rate-limited and locked after ten tries.
+> • PDF permission restrictions stay in place unless you enter the owner password.
+>
+> SUPPORTED: PDF (RC4, AES-128, AES-256), DOCX/XLSX/PPTX (ECMA-376 encryption), ZIP (ZipCrypto, AES).
+>
+> Open source under the MIT license: https://github.com/nullthrone/unpassword
+
+Name Google products only descriptively ("works with Google Drive and Gmail"). Never use them in the app name, icon or banner.
+
+## 10. Submit and review
+
+1. Check that every URL in the listing loads over HTTPS and that the screenshots match the current app.
+2. *Store Listing* → **Publish**. The listing goes to Marketplace review. Google says this typically takes several days. OAuth verification (step 7) must be complete or in progress.
+3. Common reasons for rejection, to check beforehand:
+   - an app name or logo that differs between the consent screen and the listing;
+   - unverified authorized domains;
+   - broken links or test URLs;
+   - non-transparent or low-quality icons;
+   - incomplete functionality.
+4. After approval, add the Marketplace link to the "Get it" section of the homepage (`site/index.html`).

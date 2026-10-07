@@ -27,7 +27,7 @@ unpassword's use of information received from Google APIs adheres to the [Google
 
 ## Hosting
 
-This website and the web app are static files served by GitHub Pages, operated by GitHub, Inc., USA. To deliver the pages, GitHub processes technical access data: IP address, time, requested file and browser identification. GitHub may store this data in server logs. The logs contain no file content and no passwords. The legal basis is Art. 6(1)(f) GDPR, our legitimate interest in delivering the site securely. Details are in the [GitHub General Privacy Statement](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement).
+This website and the web app are static files at `unpassword.nullthrone.xyz`, served by GitHub Pages, operated by GitHub, Inc., USA. To deliver the pages, GitHub processes technical access data: IP address, time, requested file and browser identification. GitHub may store this data in server logs. The logs contain no file content and no passwords. The legal basis is Art. 6(1)(f) GDPR, our legitimate interest in delivering the site securely. Details are in the [GitHub General Privacy Statement](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement).
 
 The documentation pages contain no scripts. The web app loads scripts only from this site, and from Google only when you choose to use Google Drive.
 

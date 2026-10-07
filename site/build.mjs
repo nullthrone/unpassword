@@ -16,7 +16,7 @@ import { Marked } from "marked";
 
 const ROOT = join(import.meta.dirname, "..");
 const REPO = "https://github.com/nullthrone/unpassword";
-export const SITE_URL = "https://nullthrone.github.io/unpassword/";
+export const SITE_URL = "https://unpassword.nullthrone.xyz/";
 
 const { values: args } = parseArgs({
   options: { out: { type: "string" }, app: { type: "string" } },
@@ -236,7 +236,7 @@ function marketplacePage() {
   <p class="eyebrow">Google Workspace Marketplace</p>
   <h1>Brand assets</h1>
   <div class="double-rule" aria-hidden="true"></div>
-  <p class="lede">Graphics for the Marketplace listing, generated from <code>design/unpassword</code> by <code>scripts/render-brand-assets.mjs</code>. The URLs the listing references are in the <a href="../setup/#5-marketplace-listing">setup guide</a>.</p>
+  <p class="lede">Graphics for the Marketplace listing, generated from <code>design/unpassword</code> by <code>scripts/render-brand-assets.mjs</code>. The URLs the listing references are in the <a href="../setup/#9-store-listing">setup guide</a>.</p>
   <ul class="assets">
 ${rows}
   </ul>
@@ -292,8 +292,9 @@ export function build() {
       title: "Not found",
       description: "This page does not exist.",
       depth: 0,
-      body: `<section class="wrap-narrow doc"><p class="eyebrow">404</p><h1>This page does not exist.</h1><div class="double-rule" aria-hidden="true"></div><p class="prose">Go to the <a href="/unpassword/">overview</a>.</p></section>`,
-    }).replace(/(href|src)="(?!https?:|\/|#|mailto:)/g, '$1="/unpassword/'),
+      active: "404", // no navigation item is current
+      body: `<section class="wrap-narrow doc"><p class="eyebrow">404</p><h1>This page does not exist.</h1><div class="double-rule" aria-hidden="true"></div><p class="prose">Go to the <a href="/">overview</a>.</p></section>`,
+    }).replace(/(href|src)="(?!https?:|\/|#|mailto:)/g, '$1="/'),
   );
 
   write("assets/site.css", stylesheet());
