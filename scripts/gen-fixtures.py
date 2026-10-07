@@ -12,10 +12,12 @@ documents and reproduces how they were made. Encryption uses random salts, so
 regenerated files differ byte-wise while remaining equivalent.
 """
 import io
+import re
 import shutil
 import subprocess
 import tempfile
 import zipfile
+import zlib
 from pathlib import Path
 
 import msoffcrypto
@@ -97,6 +99,54 @@ def gen_pdf():
     save_pdf("restricted-rc4-40.pdf", user=USER_PW, owner=OWNER_PW, R=2, aes=False, metadata=False, allow=RESTRICTED)
     # no open password, only owner restrictions
     save_pdf("owner-only.pdf", user="", owner=OWNER_PW, R=6, allow=RESTRICTED)
+    save_unencrypted_stream_pdf("unencrypted-stream-aes256.pdf")
+
+
+def save_unencrypted_stream_pdf(name: str):
+    """AES-256 file in which one small font stream (a /CIDSet) was left unencrypted.
+
+    Some producers write files like this. Decrypting such a stream yields bytes that
+    no longer inflate, which must not abort the whole unlock.
+    """
+    pdf = pdf_doc()
+    # stored deflate, 23 bytes: longer than one AES block, like the streams seen in the wild
+    plain = zlib.compress(b"\xff" * 12, 0)
+    descriptor = pdf.make_indirect(
+        pikepdf.Dictionary(
+            Type=pikepdf.Name.FontDescriptor,
+            FontName=pikepdf.Name.Helvetica,
+            CIDSet=pdf.make_stream(plain, Filter=pikepdf.Name.FlateDecode),
+        )
+    )
+    pdf.pages[0].obj.Resources.Font.F1.FontDescriptor = descriptor
+    path = OUT / "pdf" / name
+    pdf.save(
+        path,
+        static_id=True,
+        deterministic_id=False,
+        object_stream_mode=pikepdf.ObjectStreamMode.disable,
+        encryption=pikepdf.Encryption(user=USER_PW, owner=OWNER_PW, R=6, allow=RESTRICTED),
+    )
+    with pikepdf.open(path, password=USER_PW) as enc:
+        num = enc.pages[0].obj.Resources.Font.F1.FontDescriptor.CIDSet.objgen[0]
+
+    # Put the plaintext back in place of the encrypted stream data, then rebuild the xref.
+    data = path.read_bytes()
+    obj = re.compile(rb"(?m)^%d 0 obj\b.*?/Length (\d+).*?stream\r?\n" % num, re.S).search(data)
+    start = obj.end()
+    end = start + int(obj.group(1))
+    # The filter as a one-element array, as the producer wrote it: qpdf then does not
+    # recognise the stream as already compressed and tries to inflate it.
+    head = data[: obj.start(1)] + str(len(plain)).encode() + data[obj.end(1) : start]
+    head = head[: obj.start()] + head[obj.start() :].replace(b"/Filter /FlateDecode", b"/Filter [ /FlateDecode ]")
+    data = head + plain + data[end:]
+    body = data[: data.rindex(b"\nxref\n") + 1]
+    offsets = {int(m.group(1)): m.start() for m in re.finditer(rb"(?m)^(\d+) 0 obj\b", body)}
+    size = max(offsets) + 1
+    xref = b"xref\n0 %d\n0000000000 65535 f \n" % size
+    xref += b"".join(b"%010d 00000 n \n" % offsets[i] for i in range(1, size))
+    trailer = data[data.index(b"trailer", len(body)) : data.rindex(b"startxref")]
+    path.write_bytes(body + xref + trailer + b"startxref\n%d\n%%%%EOF\n" % len(body))
 
 
 def minimal_docx() -> bytes:
