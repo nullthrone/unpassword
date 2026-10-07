@@ -73,11 +73,20 @@ None of these values is secret. They end up in the public JavaScript bundle by d
 
 ## 5. Deploy the site and the web app
 
-Push a tag `v*` (e.g. `v0.1.0`), or run *Actions* → *Deploy to GitHub Pages* → *Run workflow*. `.github/workflows/pages.yml` builds the web app and the documentation site, then deploys both:
+`.github/workflows/pages.yml` builds the web app and the documentation site, then deploys both:
 
 - `/` – documentation site (`site/`, rendered from `docs/`)
-- `/app/` – the web app (`web/`)
+- `/app/` – the web app (`web/`), always built from a release tag
+- `/BUILD.txt` – the release tag of the app and the commit of the site
 - `/SHA256SUMS.txt` – checksums of every published file, also attached to the workflow run
+
+It runs when:
+
+- **a tag `v*` is pushed** (e.g. `v0.1.0`): site and app from that tag. This is how a release is published, and the first deployment needs one.
+- **`docs/`, `site/` or `design/` change on `main`**: site from `main`, app from the latest release tag. Skipped while `main` contains app changes that are not released yet, so the site never describes an app that is not deployed; the documentation then goes live with the next tag.
+- **started manually** (*Actions* → *Deploy to GitHub Pages* → *Run workflow*): site from the chosen branch or tag, app from that tag or else the latest release tag, without the skip. Use it to publish an urgent documentation fix (e.g. the privacy policy) ahead of a release.
+
+The `github-pages` environment must allow deployments from `main` and from `v*` tags (*Settings* → *Environments* → *github-pages* → *Deployment branches and tags*).
 
 Then check the deployment:
 
