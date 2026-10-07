@@ -69,6 +69,10 @@ ALLOW_ALL = pikepdf.Permissions(
     print_highres=True,
 )
 RESTRICTED = pikepdf.Permissions(extract=False, print_highres=False, modify_other=False, modify_assembly=False)
+# as Acrobat writes it with "text access for screen readers" unchecked
+RESTRICTED_NO_ACCESS = pikepdf.Permissions(
+    accessibility=False, extract=False, print_highres=False, modify_other=False, modify_assembly=False
+)
 
 
 def gen_pdf():
@@ -80,6 +84,17 @@ def gen_pdf():
     save_pdf("restricted-aes256.pdf", user=USER_PW, owner=OWNER_PW, R=6, allow=RESTRICTED)
     save_pdf("restricted-aes128.pdf", user=USER_PW, owner=OWNER_PW, R=4, aes=True, allow=RESTRICTED)
     save_pdf("restricted-rc4.pdf", user=USER_PW, owner=OWNER_PW, R=3, aes=False, metadata=False, allow=RESTRICTED)
+    # accessibility denied: only R2/R3 can express it, AES-256 cannot
+    save_pdf(
+        "restricted-rc4-noaccess.pdf",
+        user=USER_PW,
+        owner=OWNER_PW,
+        R=3,
+        aes=False,
+        metadata=False,
+        allow=RESTRICTED_NO_ACCESS,
+    )
+    save_pdf("restricted-rc4-40.pdf", user=USER_PW, owner=OWNER_PW, R=2, aes=False, metadata=False, allow=RESTRICTED)
     # no open password, only owner restrictions
     save_pdf("owner-only.pdf", user="", owner=OWNER_PW, R=6, allow=RESTRICTED)
 

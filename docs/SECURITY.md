@@ -38,7 +38,7 @@
 | One password per call, no candidate lists | `Unlocker` type in `src/core/types.ts`; zip.js is used through its core API with a single `password` |
 | Rate limit: 2 free failures, then exponential delay from 5 s, lock after 10 | `src/core/guard.ts`, applied in `src/core/session.ts` inside the worker |
 | Wrong ZipCrypto passwords that pass the 1-byte check are still rejected | CRC verification, test with 600 wrong passwords in `tests/zip.test.ts` |
-| PDF restrictions preserved without the owner password | `src/core/pdf/policy.ts` (pure, table-tested), with verification after re-encryption |
+| PDF restrictions preserved without the owner password | `src/core/pdf/policy.ts` (pure, table-tested), with verification after re-encryption. Exception: the accessibility permission, which PDF 2.0 deprecates and readers must ignore; AES-256 cannot carry it |
 | No owner-password recovery, no "remove restrictions only" mode | policy refuses `owner-password-required` |
 | No hash or verifier export | guardrail test |
 | Unsupported protection is refused rather than worked around | DRM / certificate handlers → `unsupported` |

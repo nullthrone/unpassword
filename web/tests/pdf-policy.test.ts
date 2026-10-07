@@ -39,6 +39,12 @@ describe('decidePdfAction', () => {
     });
   });
 
+  it('user password, only the deprecated accessibility permission denied → decrypt', () => {
+    expect(
+      decidePdfAction(info({ userPasswordMatched: true, capabilities: { ...ALL, accessibility: false } }), false),
+    ).toEqual({ kind: 'decrypt' });
+  });
+
   it('owner password → decrypt, whatever the restrictions', () => {
     expect(decidePdfAction(info({ ownerPasswordMatched: true, capabilities: RESTRICTED }), false)).toEqual({
       kind: 'decrypt',
@@ -74,5 +80,11 @@ describe('restrictionsPreserved', () => {
     expect(restrictionsPreserved(RESTRICTED, RESTRICTED)).toBe(true);
     expect(restrictionsPreserved(RESTRICTED, { ...RESTRICTED, extract: true })).toBe(false);
     expect(restrictionsPreserved(RESTRICTED, { ...RESTRICTED, printlow: false })).toBe(true);
+  });
+
+  it('ignores the deprecated accessibility permission', () => {
+    const noAccess = { ...RESTRICTED, accessibility: false };
+    expect(restrictionsPreserved(noAccess, RESTRICTED)).toBe(true);
+    expect(restrictionsPreserved(noAccess, { ...RESTRICTED, extract: true })).toBe(false);
   });
 });

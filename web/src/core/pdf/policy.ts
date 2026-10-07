@@ -32,23 +32,30 @@ export type PdfAction =
   | { kind: 'preserve-restrictions'; capabilities: PdfCapabilities }
   | { kind: 'refuse'; reason: 'not-encrypted' | 'wrong-password' | 'owner-password-required' };
 
+/**
+ * Permissions that can still be enforced. `accessibility` is left out: PDF 2.0
+ * deprecates the bit and requires readers to ignore it, so qpdf neither writes
+ * nor reports it for R ≥ 4 and an AES-256 copy cannot carry it. Only R2/R3
+ * files can deny it, and for R2 it merely mirrors `extract`, which is kept.
+ */
+const ENFORCEABLE: readonly (keyof PdfCapabilities)[] = [
+  'extract',
+  'modify',
+  'modifyannotations',
+  'modifyassembly',
+  'modifyforms',
+  'modifyother',
+  'printhigh',
+  'printlow',
+];
+
 export function hasRestrictions(c: PdfCapabilities): boolean {
-  return !(
-    c.accessibility &&
-    c.extract &&
-    c.modify &&
-    c.modifyannotations &&
-    c.modifyassembly &&
-    c.modifyforms &&
-    c.modifyother &&
-    c.printhigh &&
-    c.printlow
-  );
+  return ENFORCEABLE.some((k) => !c[k]);
 }
 
-/** True if every permission denied in `original` is still denied in `result`. */
+/** True if every enforceable permission denied in `original` is still denied in `result`. */
 export function restrictionsPreserved(original: PdfCapabilities, result: PdfCapabilities): boolean {
-  return (Object.keys(original) as (keyof PdfCapabilities)[]).every((k) => original[k] || !result[k]);
+  return ENFORCEABLE.every((k) => original[k] || !result[k]);
 }
 
 /**
