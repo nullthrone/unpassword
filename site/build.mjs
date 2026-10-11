@@ -182,7 +182,7 @@ ${body}
     <nav class="footer-nav" aria-label="Footer">
       <a href="${p}privacy/">Privacy</a><a href="${p}terms/">Terms</a><a href="${p}security/">Security</a><a href="${p}setup/">Setup</a><a href="${p}support/">Support</a><a href="${p}imprint/">Imprint</a><a href="${p}marketplace/">Brand assets</a><a href="${REPO}" rel="noopener">Source</a>
     </nav>
-    <p class="footer-note">© 2026 Nullthrone · Thomas Sprock. Decryption happens in your browser. This site loads no scripts.</p>
+    <p class="footer-note">© 2026 Nullthrone · Thomas Sprock. Decryption happens in your browser. This site loads no scripts.<br>Google Drive™, Gmail™ and Google Workspace™ are trademarks of Google LLC.</p>
   </div>
 </footer>
 </body>
@@ -324,7 +324,7 @@ function landing() {
   return {
     title: "",
     description:
-      "unpassword removes the password protection of PDF, Office and ZIP files whose password you know – entirely in your browser. Zero-knowledge, open source, for Google Workspace.",
+      "unpassword removes the password protection of PDF, Office and ZIP files whose password you know – entirely in your browser. Zero-knowledge, open source, for Google Workspace™.",
     body,
     bodyClass: "home",
   };

@@ -48,13 +48,18 @@ In *Google Auth Platform* (OAuth consent screen), fill in *Branding*, *Audience*
 | Developer contact | `github@nullthrone.xyz` |
 | Audience | External, then *Publish app* to move to production |
 
-Add exactly these scopes, no more:
+Add exactly these scopes, no more. The same list goes into the Marketplace SDK (step 8); Google rejects the listing when the two differ, or when the Apps Script project requests a scope that is missing here.
 
 | Scope | Used by | Purpose |
 |---|---|---|
 | `https://www.googleapis.com/auth/drive.file` | Web app, add-on | Open the file the user picked, create the unlocked copy, store the encrypted attachment |
 | `https://www.googleapis.com/auth/gmail.addons.execute` | Add-on | Run the add-on in Gmail |
 | `https://www.googleapis.com/auth/gmail.addons.current.message.readonly` | Add-on | Read the attachments of the open message to detect password protection |
+| `https://www.googleapis.com/auth/drive.install` | Marketplace install | List unpassword in Drive's *Open with* menu (Drive app integration) |
+| `https://www.googleapis.com/auth/userinfo.email` | Marketplace install | Added by the Marketplace SDK by default; do not remove |
+| `https://www.googleapis.com/auth/userinfo.profile` | Marketplace install | Added by the Marketplace SDK by default; do not remove |
+
+At runtime each part requests only what it uses: the web app `drive.file`, the add-on the three scopes in `gmail-addon/appsscript.json` (rows marked *Add-on*). `gmail-addon/scopes.test.mjs` checks that this table, the manifest and the web app agree.
 
 `gmail.addons.current.message.readonly` is a **sensitive** scope. That triggers the verification in step 7. The console shows the classification of each scope; go by what it says.
 
@@ -131,6 +136,12 @@ These texts can be pasted as they are.
 
 > Required to run the Gmail add-on, which displays the list of protected attachments in the side panel of the open message.
 
+**`drive.install`** (non-sensitive)
+
+> Lets users who install unpassword from the Google Workspace Marketplace open a protected file directly from Google Drive with "Open with → unpassword". It grants no access to file contents.
+
+`userinfo.email` and `userinfo.profile` are added by the Marketplace SDK; they need no justification.
+
 ### Demo video
 
 Upload the video to YouTube as *Unlisted*, 2–4 minutes long, in English or with English captions. Storyboard:
@@ -144,6 +155,7 @@ Upload the video to YouTube as *Unlisted*, 2–4 minutes long, in English or wit
 
 ### Expectations
 
+- Submit only after the scope lists match (step 10, checklist). The Marketplace review is put on hold while verification is pending, and the listing is rejected if it is submitted before verification has passed.
 - Keep the homepage, privacy policy and terms reachable, and keep them identical to the URLs on the consent screen.
 - Google may ask follow-up questions by email to the developer contact. Answer from the security model (`/security/`).
 - Verification of sensitive scopes takes from several days to a few weeks.
@@ -155,7 +167,7 @@ Upload the video to YouTube as *Unlisted*, 2–4 minutes long, in English or wit
 | App visibility | Public |
 | Installation settings | Individual + Admin install |
 | App integrations | **Drive app** and **Google Workspace add-on** |
-| OAuth scopes | Exactly the three scopes from step 3 |
+| OAuth scopes | Exactly the six scopes from step 3 |
 | Developer information | Nullthrone · Thomas Sprock, `github@nullthrone.xyz`, website `https://unpassword.nullthrone.xyz/` |
 
 **Google Workspace add-on:** enter the deployment ID from step 6.
@@ -198,7 +210,7 @@ All graphics, with previews, are on [`/marketplace/`](https://unpassword.nullthr
 > unpassword removes the password protection of PDF, Word, Excel, PowerPoint and ZIP files whose password you know – for example statements, payslips or reports sent to you with a password. Archive them under protection you control, such as your Google account, instead of a sender's file password.
 >
 > HOW IT WORKS
-> • Open a protected file from Google Drive ("Open with → unpassword"), from a Gmail attachment, or from your device.
+> • Open a protected file from Google Drive™ ("Open with → unpassword"), from a Gmail™ attachment, or from your device.
 > • Enter the password you were given.
 > • Download the unlocked file or save it next to the original in Drive.
 >
@@ -216,17 +228,29 @@ All graphics, with previews, are on [`/marketplace/`](https://unpassword.nullthr
 > SUPPORTED: PDF (RC4, AES-128, AES-256), DOCX/XLSX/PPTX (ECMA-376 encryption), ZIP (ZipCrypto, AES).
 >
 > Open source under the MIT license: https://github.com/nullthrone/unpassword
+>
+> Google Drive™, Gmail™ and Google Workspace™ are trademarks of Google LLC.
 
-Name Google products only descriptively ("works with Google Drive and Gmail"). Never use them in the app name, icon or banner.
+Name Google products only descriptively ("works with Google Drive™ and Gmail™") and attribute them: the ™ symbol at the first mention, and the trademark notice at the end of the detailed description ([branding guidelines](https://developers.google.com/workspace/marketplace/terms/branding#giving_proper_attribution)). Never use them in the app name, icon or banner.
 
 ## 10. Submit and review
 
-1. Check that every URL in the listing loads over HTTPS and that the screenshots match the current app.
-2. *Store Listing* → **Publish**. The listing goes to Marketplace review. Google says this typically takes several days. OAuth verification (step 7) must be complete or in progress.
-3. Common reasons for rejection, to check beforehand:
+Submit the listing only after OAuth verification (step 7) has **passed**. While it is pending, Google puts the Marketplace review on hold and rejects the submission.
+
+1. **Scopes match in all three places:**
+   - Apps Script editor → *Overview* → *Project OAuth Scopes*: the three *Add-on* scopes from step 3, nothing else.
+   - Marketplace SDK → *App Configuration* → *OAuth Scopes*: all six scopes from step 3.
+   - *Google Auth Platform* → *Data access*: the same six scopes.
+
+   A scope the Apps Script project requests that is missing on the consent screen shows the "Google hasn't verified this app" screen to new users, and the review fails.
+2. **Trademarks:** every Google product name in the listing carries ™, and the detailed description ends with the trademark notice (step 9).
+3. **No premature Marketplace references:** the website must not link to the listing, and must not announce it ("coming soon", disabled buttons) before it is approved. Such references delay OAuth verification.
+4. Check that every URL in the listing loads over HTTPS and that the screenshots match the current app.
+5. *Store Listing* → **Publish**. The listing goes to Marketplace review. Google says this typically takes several days.
+6. Common reasons for rejection, to check beforehand:
    - an app name or logo that differs between the consent screen and the listing;
    - unverified authorized domains;
    - broken links or test URLs;
    - non-transparent or low-quality icons;
    - incomplete functionality.
-4. After approval, add the Marketplace link to the "Get it" section of the homepage (`site/index.html`).
+7. After approval, add the Marketplace link to the "Get it" section of the homepage (`site/index.html`).
